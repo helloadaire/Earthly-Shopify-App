@@ -2,10 +2,10 @@
 
 Basic instructions:
 
-1. Create Base App (default earthly-app) | https://shopify.dev/docs/apps/getting-started/create
+1. Create Base App (default earthly) | https://shopify.dev/docs/apps/getting-started/create
 ```console
 npm init @shopify/app@latest
-cd earthly-app
+cd earthly
 npm run dev
 ```
 
