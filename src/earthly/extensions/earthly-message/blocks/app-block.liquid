@@ -1,0 +1,18 @@
+<span id="earthly-badge" style="color: {{ block.settings.TextColor }};background-color: {{ block.settings.BackgroundColor }}"></span>
+
+{% render "app_snippet" %}
+{% schema %}
+  {
+    "name": "Earthy App UI Ext",
+    "target": "body",
+    "enabled_on": {
+      "templates": ["product","cart"]
+    },
+    "stylesheet": "app.css",
+    "javascript": "app.js",
+    "settings": [
+        { "label": "TextColor", "id": "TextColor", "type": "color", "default": "#ffffff" },
+		{ "label": "BackgroundColor", "id": "BackgroundColor", "type": "color", "default": "#00FF7F" }
+    ]
+  }
+{% endschema %}
