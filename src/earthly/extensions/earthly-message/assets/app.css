@@ -1,9 +1,0 @@
-#earthly-badge{
-	background-image: url('https://www.newweb.co.za/badge.png');
-	width: 100%;
-	display: inline-block;
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: right;
-	min-height: 100px;
-}
