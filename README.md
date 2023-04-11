@@ -5,14 +5,15 @@ Read files for comments.
 Files of note:
 ```
 Backend:
-/web
-index.js
-webhook-handlers.js
+/web/index.js
 
 Frontend:
-/web/frontend/pages
-index.jsx
+/web/frontend/pages/index.jsx
 
-// ENV values
+Webhooks:
+/web/webhook-handlers.js
+
+ENV values:
 Dockerfile
 ```
+
