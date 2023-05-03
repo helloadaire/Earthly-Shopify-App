@@ -1,3 +1,5 @@
+You can already deploy the APP using the Dockerfile (Step2), but highly recommend you build the APP yourself so you can see how it works. 
+
 1. Create a new DEV APP
 
 Create Partners Account:
@@ -10,7 +12,7 @@ Install Shopify CLI - Follow instructions and create new blank app:
 npm init @shopify/app@latest
 
 Run the app so we can link it with our partners account: 
-(** If you are on a local machine then you have to run a seperate https tunnel, I used Ngrok)
+(** If you are on a local machine then you have to run a separate https tunnel, I used Ngrok)
 cd {app name}
 npm run dev
 shutdown app
@@ -58,8 +60,10 @@ shutdown app
 
 Go back to partners account:
 Set up APP info
-Publish Extentions
+Publish Extensions
 Distribute as Public APP
+Distribute as Public APP
+Request for Protected customer data access
 
 Last Run, now we can install, develop and test:
 npm run dev
