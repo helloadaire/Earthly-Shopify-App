@@ -11,7 +11,7 @@ https://partners.shopify.com/
 Install Shopify CLI - Follow instructions and create new blank app:
 npm init @shopify/app@latest
 
-Run the app so we can link it with our partners account: 
+Run the app so we can link it with our partners account (Don't install yet): 
 (** If you are on a local machine then you have to run a separate https tunnel, I used Ngrok)
 cd {app name}
 npm run dev
