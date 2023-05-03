@@ -1,4 +1,4 @@
-You can already deploy the APP using the Dockerfile (Step2), but highly recommend you build the APP yourself so you can see how it works. 
+You can already deploy the APP using the Dockerfile (Step2), but I highly recommend you build the APP yourself so you can see how it works. 
 
 1. Create a new DEV APP
 
