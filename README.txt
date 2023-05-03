@@ -43,6 +43,7 @@ shopify.app.toml
 -----billing.js
 -----shopify.js
 -----frontend/
+-------------App.jsx
 -------------assets/*
 -------------pages/
 ------------------index.jsx
