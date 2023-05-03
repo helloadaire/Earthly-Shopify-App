@@ -63,7 +63,6 @@ Go back to partners account:
 Set up APP info
 Publish Extensions
 Distribute as Public APP
-Distribute as Public APP
 Request for Protected customer data access
 
 Last Run, now we can install, develop and test:
