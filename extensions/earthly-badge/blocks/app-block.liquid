@@ -1,0 +1,123 @@
+<span id="earthly-badge" style="display:inline-block;position:relative" 
+badgeLocation="{{block.settings.badgeLocation}}" 
+badgePlacement="{{block.settings.badgePlacement}}" 
+badgeAlignment="{{block.settings.badgeAlignment}}" 
+badgeSize="{{block.settings.badgeSize}}" 
+badgeMargin="{{block.settings.badgeMargin}}" 
+badgeLocationC="{{block.settings.badgeLocationC}}" 
+badgePlacementC="{{block.settings.badgePlacementC}}" 
+badgeAlignmentC="{{block.settings.badgeAlignmentC}}" 
+badgeSizeC="{{block.settings.badgeSizeC}}" 
+badgeMarginC="{{block.settings.badgeMarginC}}" 
+><img id="earthly-badge-image" /></span>
+
+{% render "app_snippet" %}
+{% schema %}
+  {
+    "name": "Earthy App UI Ext",
+    "target": "body",
+    "enabled_on": {
+      "templates": ["product","cart"]
+    },
+    "stylesheet": "app.css",
+    "javascript": "app.js",
+    "settings": [
+		{
+			"type": "header",
+			"content": "Product page badge"
+		},
+		{
+			"type": "paragraph",
+			"content": "Please remember to preview on a product page"
+		},
+        { 
+			"label": "Badge Location (0-10) Predefined",
+			"id": "badgeLocation",
+			"type": "number",
+			"default": 1
+		},
+		{ 
+			"label": "Badge Placement",
+			"id": "badgePlacement",
+			"type": "select",
+			"options": [
+			{
+			  "value": "after",
+			  "label": "After"
+			},
+			{
+			  "value": "before",
+			  "label": "Before"
+			}
+		  ],
+			"default": "after"
+		},
+		{ 
+			"label": "Badge alignment (left,top,right,bottom,center,...)",
+			"id": "badgeAlignment",
+			"type": "text",
+			"default": "center"
+		},
+		{ 
+			"label": "Badge size (px or %)",
+			"id": "badgeSize",
+			"type": "text",
+			"default": "100%"
+		},
+		{ 
+			"label": "Badge margin (top right bottom left)",
+			"id": "badgeMargin",
+			"type": "text",
+			"default": "0px 0px 0px 0px"
+		},
+		{
+			"type": "header",
+			"content": "Cart page badge"
+		},
+		{
+			"type": "paragraph",
+			"content": "Please remember to preview cart page"
+		},
+		{ 
+			"label": "Badge Location (0-10) Predefined",
+			"id": "badgeLocationC",
+			"type": "number",
+			"default": 1
+		},
+		{ 
+			"label": "Badge Placement",
+			"id": "badgePlacementC",
+			"type": "select",
+			"options": [
+			{
+			  "value": "after",
+			  "label": "After"
+			},
+			{
+			  "value": "before",
+			  "label": "Before"
+			}
+		  ],
+			"default": "after"
+		},
+		{ 
+			"label": "Badge alignment (left,top,right,bottom,center,...)",
+			"id": "badgeAlignmentC",
+			"type": "text",
+			"default": "center"
+		},
+		{ 
+			"label": "Badge size (px or %)",
+			"id": "badgeSizeC",
+			"type": "text",
+			"default": "100%"
+		},
+		{ 
+			"label": "Badge margin (top right bottom left)",
+			"id": "badgeMarginC",
+			"type": "text",
+			"default": "0px 0px 0px 0px"
+		}
+    ]
+  }
+{% endschema %}

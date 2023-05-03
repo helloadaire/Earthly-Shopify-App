@@ -1,26 +1,32 @@
 import { DeliveryMethod } from "@shopify/shopify-api";
 import { MongoClient } from "mongodb";
+import shopify from "./shopify.js";
+import {
+  billingConfig,
+  createUsageRecord,
+  getAppSubscription,
+} from "./billing.js";
 
 export default {
   // Handle Order Paid Call Back.
   // 1. Query shop that triggered the call. Read shop settings and skip if shop status is Paused. Continue to step 2 if shop is Active.
   // 2. Send API call to Earthly to create new assets based on shop amount multiplier. If successfull move to step 3.
-  // 3. Register event and relevant order information under records collection 
+  // 3. Register event and relevant order information under records collection
   ORDERS_PAID: {
     deliveryMethod: DeliveryMethod.Http,
     callbackUrl: "/api/webhooks",
     callback: async (topic, shop, body, webhookId) => {
-	  // ini
+      // ini
       const payload = JSON.parse(body);
       const order_id = '{"orderId":' + payload["id"] + "}";
       const uri =
         "mongodb+srv://earthlyapp:70JKQBvUUWkbLrWd@earthly.fkmgicj.mongodb.net/?retryWrites=true&w=majority";
       const client = new MongoClient(uri);
-      console.log(shop+" Webhook incoming");
-	  // Records events that happen successfully STEP 3
+      console.log(shop + " Webhook incoming");
+      // Records events that happen successfully STEP 3
       function captureRecord(result, first) {
         const client2 = new MongoClient(uri);
-        console.log("capture record mongo");
+        console.log("capture record");
         console.log(result["created"]);
         try {
           client2.connect();
@@ -33,17 +39,16 @@ export default {
             shopId: first.shopId,
             shopifyMessage: order_id,
           };
-          const supdate = collection.insertOne(
-            record,
-            function (err, result) {}
-          );
-          console.log(supdate);
-          console.log(record);
+          const supdate = collection.insertOne(record, function (err, result) {
+            console.log("ERORR" + err);
+          });
+          //console.log(supdate);
+          //console.log(record);
         } finally {
           client2.close();
         }
       }
-	  // STEP 1
+      // STEP 1
       try {
         // Get settings
         await client.connect();
@@ -52,7 +57,7 @@ export default {
         const first = await collection.findOne({
           shopId: shop,
         });
-        console.log(first.status);
+        //console.log(first.status);
         // Decide if we should register order
         if (first.status == "Active") {
           console.log("Account Active!");
@@ -62,19 +67,29 @@ export default {
           const firstc = await dbc.findOne({
             shopifyMessage: order_id,
           });
-		  // STEP 2
-		  // Make sure this order is not recorded already. Webhooks are often sent multiple times.
-		  // If new record then create asset and record the event.
+          // STEP 2
+          // Make sure this order is not recorded already. Webhooks are often sent multiple times.
+          // If new record then create asset and record the event.
           console.log("Making sure this is not a duplicate!");
           console.log(firstc);
           if (firstc == null) {
             console.log("Not a Duplicate. Create Assets on Earthly.");
+            //Charge merchant
+            let resp = null;
+            console.log(shop + " Charging Merchant");
+            const sessionId = await shopify.api.session.getOfflineId(shop);
+            const session = await shopify.config.sessionStorage.loadSession(
+              sessionId
+            );
+            resp = await createUsageRecord(session, first.appCharge);
+            console.log(resp);
+            //Creating asset
             var myHeaders = new Headers();
             myHeaders.append("Authorization", first.earthlyApiKey);
             myHeaders.append("Content-Type", "application/json");
             var raw = JSON.stringify({
               projectId: first.earthlyProjectId,
-              userId: "642d622a148090001899014e",
+              userId: first.earthlyAlmondUserId,
               amount: first.amount,
             });
             var requestOptions = {
@@ -88,7 +103,7 @@ export default {
               requestOptions
             )
               .then((response) => response.json())
-              .then((result) => captureRecord(result, first, body))
+              .then((result) => captureRecord(result, first))
               .catch((error) => console.log("error", error));
           } else {
             console.log("Duplicate Record, Skipped!");
@@ -99,6 +114,15 @@ export default {
       } finally {
         await client.close();
       }
+    },
+  },
+  APP_SUBSCRIPTIONS_UPDATE: {
+    deliveryMethod: DeliveryMethod.Http,
+    callbackUrl: "/api/webhooks",
+    callback: async (topic, shop, body, webhookId) => {
+      const payload = JSON.parse(body);
+      console.log(shop, "shop");
+      console.log(payload, "payload");
     },
   },
   /**

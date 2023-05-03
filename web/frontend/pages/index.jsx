@@ -16,15 +16,20 @@ import {
   EmptyState,
   AccountConnection,
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
 import { earthlyHero } from "../assets";
+import { agroforestry } from "../assets";
+import { eden } from "../assets";
+import { peatland } from "../assets";
+import { tropical } from "../assets";
+
 import { useAppQuery, useAuthenticatedFetch } from "../hooks";
+import { PaidFeature } from "../components";
 
 export default function HomePage() {
   // init
   const [connected, setConnected] = useState(false);
-  const accountName = connected ? " O N" : "";
-  const appFetch = useAuthenticatedFetch();
+  const accountName = connected ? " O N " : "";
+  const AuthenticatedFetch = useAuthenticatedFetch();
   const mystyle = {
     display: "flex",
     boxShadow: "var(--p-shadow-card)",
@@ -41,7 +46,7 @@ export default function HomePage() {
   const details = connected ? (
     <p>
       You are investing in Nature with every order. You can pause at anytime!{" "}
-      <a href="#">BADGE settings</a>
+      <a target="_parent" href="https://admin.shopify.com/store/earthly-app/themes/current/editor?context=apps">BADGE settings</a>
     </p>
   ) : (
     "Investment on Pause. You can re connect at anytime!"
@@ -49,13 +54,13 @@ export default function HomePage() {
   const terms = connected ? null : (
     <p>
       By clicking <strong>Connect</strong>, you agree to accept Earthly App's
-      <Link url="https://earthly.org/"> terms and conditions</Link>. You'll pay
-      a commission rate of 5% on sales made through Earthly App.
+      <Link url="https://earthly.org/"> terms and conditions</Link>.
     </p>
   );
   // Handle connect button
+  // You can use useAuthenticatedFetch for authenticated post
   const handleAction = useCallback((e) => {
-    appFetch("/api/saveconfig", {
+    AuthenticatedFetch("/api/saveconfig", {
       method: "POST",
       body: '{"code":"savestatus","message":"' + e.target.innerText + '"}',
       headers: {
@@ -66,11 +71,12 @@ export default function HomePage() {
       setConnected((connected) => !connected);
     });
   }, []);
-  // Handle package select
+  // Handle package select 
+  // You can use useAuthenticatedFetch for authenticated post
   const handlePackageAction = (e) => {
     console.log(e.target.value);
     let packageInfo = e.target.value;
-    appFetch("/api/saveconfig", {
+    AuthenticatedFetch("/api/saveconfig", {
       method: "POST",
       body: '{"code":"savepackage","message":"' + packageInfo + '"}',
       headers: {
@@ -82,12 +88,14 @@ export default function HomePage() {
   };
   // Show Shop panel if shop is registered only
   function showPanel(qresult) {
+	  console.log(qresult);
     document.getElementsByClassName("connectionPanel")[0].style.visibility =
       "visible";
-    let selectedPackaged = qresult.amount + ":" + qresult.earthlyProjectId;
+    let selectedPackaged = qresult.amount + ":" + qresult.earthlyProjectId + ":" + qresult.appCharge;
     document.querySelector('[value="' + selectedPackaged + '"]').checked = true;
   }
-  // Query Shop info
+  // Query Shop info 
+  // You can use useAppQuery for authenticated get
   useAppQuery({
     url: "/api/getconfig/",
     reactQueryOptions: {
@@ -107,10 +115,13 @@ export default function HomePage() {
       },
     },
   });
+ 
   // Render
+  //https://polaris.shopify.com/components/layout-and-structure/media-card
+  //https://polaris.shopify.com/components/actions/account-connection
+  //https://polaris.shopify.com/components/feedback-indicators/badge
   return (
     <Page>
-      <TitleBar title="Plant Tress With EARTHLY" primaryAction={null} />
       <Layout>
         <Layout.Section>
           <MediaCard
@@ -149,6 +160,10 @@ export default function HomePage() {
               termsOfService={terms}
             />
           </Layout.Section>
+		  <Layout.Section>
+			<PaidFeature />
+				<Card />
+		  </Layout.Section>
           <Layout.Section>
             <Layout>
               <Layout.Section>
@@ -158,73 +173,150 @@ export default function HomePage() {
               </Layout.Section>
               <Layout.Section oneHalf>
                 <MediaCard
-                  title="Mangroves in Madagascar"
-                  description="This trail-blazing project run by Eden Reforestation Projects has reforestation and poverty alleviation at its heart. Mangroves pack some punch when it comes to carbon sequestration but also provide a whole load of other natural benefits such as storm surge protection and vital habitat for many species.The Madagascar project that we support started in 2007. The project has already planted over 300 million trees and created over 3 million workdays."
+                  title="Eden Reforestation"
+                  description="This trail-blazing project run by Eden Reforestation Projects has reforestation and poverty alleviation at its heart. Mangroves pack some punch when it comes to carbon sequestration but also provide a whole load of other natural benefits such as storm surge protection and vital habitat for many species. Cannot be used for emissions balancing."
                 >
                   <img
                     alt=""
                     width="100%"
                     height="100%"
                     style={{ objectFit: "cover", objectPosition: "center" }}
-                    src="https://a.storyblok.com/f/128545/512x359/7c1c0f714f/orangutan-rimba-raya.png"
+                    src={ agroforestry }
                   />
                 </MediaCard>
                 <div style={mystyle} onChange={handlePackageAction}>
-                  <Badge status="success">ocean acidification control</Badge>
+                  <Badge status="success">Planting Trees</Badge>
                   <RadioButton
-                    label="$ 1"
+                    label="0.20 GBP"
                     helpText="1 Tree"
                     name="earthlypackage"
-                    value="1:5f96f967a3a85800118be4d1"
+                    value="1:5f96f967a3a85800118be4d1:0.2"
                   />
                   <RadioButton
-                    label="$ 2"
+                    label="0.40 GBP"
                     helpText="2 Trees"
                     name="earthlypackage"
-                    value="2:5f96f967a3a85800118be4d1"
+                    value="2:5f96f967a3a85800118be4d1:0.4"
                   />
                   <RadioButton
-                    label="$ 3"
-                    helpText="3 Trees"
+                    label="1 GBP"
+                    helpText="5 Trees"
                     name="earthlypackage"
-                    value="3:5f96f967a3a85800118be4d1"
+                    value="5:5f96f967a3a85800118be4d1:1"
                   />
                 </div>
               </Layout.Section>
               <Layout.Section oneHalf>
                 <MediaCard
-                  title="Keo Seima"
-                  description="A REDD+ project with a focus on stopping rapidly increasing deforestation in Cambodia but helping gain land rights for the Bunong People. The project began in 2010, and impacts a total of 20,000 people."
+                  title="Tropical Forest Protection, Keo Seima"
+                  description="A REDD+ project with a focus on reducing high deforestation rates in eastern Cambodia by helping secure land rights for the indigenous Bunong in the area. The project began in 2010 and impacts more than 20,000 people. The project is Verra approved and can be used for emissions balancing."
                 >
                   <img
                     alt=""
                     width="100%"
                     height="100%"
                     style={{ objectFit: "cover", objectPosition: "center" }}
-                    src="https://a.storyblok.com/f/128545/640x427/5ce7a67c38/ksws-forests_adam-roberts-_3_-min-medium.jpeg"
+                    src={ eden }
                   />
                 </MediaCard>
                 <div style={mystyle} onChange={handlePackageAction}>
-                  <Badge status="success">biodiversity protection</Badge>
+				  <span style={{ width: "35%"}}>
+                  <Badge status="success">m2 of protected forest</Badge>
+				  </span>
                   <RadioButton
-                    label="$ 1"
-                    helpText="1 Tree"
+                    label="0.14 GBP"
+                    helpText="10m2"
                     name="earthlypackage"
-                    value="1:601ae0006fc1d70018fef078"
+                    value="0.0085:601ae0006fc1d70018fef078:0.14"
                   />
                   <RadioButton
-                    label="$ 2"
-                    helpText="2 Trees"
+                    label="0.29 GBP"
+                    helpText="20m2"
                     name="earthlypackage"
-                    value="2:601ae0006fc1d70018fef078"
+                    value="0.017:601ae0006fc1d70018fef078:0.29"
                   />
                   <RadioButton
-                    label="$ 3"
-                    helpText="3 Trees"
+                    label="0.98 GBP"
+                    helpText="70m2"
                     name="earthlypackage"
-                    value="3:601ae0006fc1d70018fef078"
+                    value="0.06:601ae0006fc1d70018fef078:0.98"
                   />
                 </div>
+              </Layout.Section>
+			  <Layout.Section oneHalf>
+                <MediaCard
+                  title="Peatland Protection, Rimba Raya"
+                  description="The Rimba Raya Biodiversity Reserve project is protecting one of the most highly endangered ecosystems in the world. Without this project, the carbon-rich, peatland forest of Rimba Raya would have been turned into palm oil estates, emitting over 100 million tonnes of carbon into the atmosphere. Instead, the project is protecting the land and working with local communities to achieve all 17 of the Sustainable Development Goals. The project is Verra approved and can be used for emissions balancing."
+                >
+                  <img
+                    alt=""
+                    width="100%"
+                    height="100%"
+                    style={{ objectFit: "cover", objectPosition: "center" }}
+                    src={peatland}
+                  />
+                </MediaCard>
+                <div style={mystyle} onChange={handlePackageAction}>
+				  <span style={{ width: "35%"}}>
+                  <Badge status="success">m2 of peatland protectedt</Badge>
+				  </span>
+                  <RadioButton
+                    label="0.39 GBP"
+                    helpText="5m2"
+                    name="earthlypackage"
+                    value="0.027:627b990fb96c5a0018eaa5e6:0.39"
+                  />
+                  <RadioButton
+                    label="0.78 GBP"
+                    helpText="10m2"
+                    name="earthlypackage"
+                    value="0.027:627b990fb96c5a0018eaa5e6:0.78"
+                  />
+                  <RadioButton
+                    label="1.17 GBP"
+                    helpText="15m2"
+                    name="earthlypackage"
+                    value="0.081:627b990fb96c5a0018eaa5e6:1.17"
+                  />
+                </div>
+              </Layout.Section>
+			  <Layout.Section oneHalf>
+                <MediaCard
+                  title="Agroforestry- Tree Planting Initiative, Kenya"
+                  description="Two decades of impactful community-centered tree planting successes later, the TIST project in Kenya is still growing! With each passing year, a growing community of farmers are including agroforestry on their land as part of the TIST program. But the benefits in carbon payments after trees are planted takes several years to cash in. The initiative closes that gap in conservation finance by supporting farmers right from the beginning of their carbon removal journey. This means their positive efforts for the environment are always rewarded, including when the finance is needed most. Cannot be used for emissions balancing."
+                >
+                  <img
+                    alt=""
+                    width="100%"
+                    height="100%"
+                    style={{ objectFit: "cover", objectPosition: "center" }}
+                    src= {tropical}
+                  />
+                </MediaCard>
+                <div style={mystyle} onChange={handlePackageAction}>
+				  <span style={{ width: "35%"}}>
+                  <Badge status="success">Planting trees</Badge>
+				  </span>
+                  <RadioButton
+                    label="1.74 GBP"
+                    helpText="1 Tree"
+                    name="earthlypackage"
+                    value="1:6271734cb96c5a0018eaa2e1:1.74"
+                  />
+                  <RadioButton
+                    label="3.48 GBP"
+                    helpText="2 Trees"
+                    name="earthlypackage"
+                    value="2:6271734cb96c5a0018eaa2e1:3.48"
+                  />
+                  <RadioButton
+                    label="5.22 GBP"
+                    helpText="3 Trees"
+                    name="earthlypackage"
+                    value="3:6271734cb96c5a0018eaa2e1:5.22"
+                  />
+                </div>
+				<div style={{ height: "50px"}} >&nbsp;</div>
               </Layout.Section>
             </Layout>
           </Layout.Section>

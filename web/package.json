@@ -1,5 +1,6 @@
 {
   "name": "shopify-app-template-node",
+  "version": "1.0.0",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -12,8 +13,8 @@
     "node": ">=14.13.1"
   },
   "dependencies": {
-    "@shopify/shopify-app-express": "^1.1.0",
-    "@shopify/shopify-app-session-storage-sqlite": "^1.0.0",
+    "@shopify/shopify-app-express": "^2.0.0",
+    "@shopify/shopify-app-session-storage-sqlite": "^1.2.1",
     "compression": "^1.7.4",
     "cross-env": "^7.0.3",
     "serve-static": "^1.14.1"
