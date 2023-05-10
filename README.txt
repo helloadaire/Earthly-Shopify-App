@@ -9,7 +9,7 @@ Create Test Store:
 https://partners.shopify.com/
 
 Install Shopify CLI - Follow instructions and create new blank app:
-npm init @shopify/app@latest
+npm init @shopify/app@3.45.1
 
 Run the app so we can link it with our partners account (Don't install yet): 
 (** If you are on a local machine then you have to run a separate https tunnel, I used Ngrok)
