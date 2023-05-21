@@ -8,7 +8,7 @@ ENV HOST https://aminfri-xg7jrfaima-uc.a.run.app
 ENV SCOPES read_orders
 EXPOSE 8081
 WORKDIR /app
-COPY package*.json .
+COPY package*.json ./
 COPY web .
 RUN npm install
 RUN npm install mongodb
