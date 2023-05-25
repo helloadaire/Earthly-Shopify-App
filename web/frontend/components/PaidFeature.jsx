@@ -77,7 +77,7 @@ export function PaidFeature() {
             <Badge status="info">Spending Limit: {billingStats[1]} GBP</Badge>
             <span style={{ float: "right", margin: "0px 0px 15px 0px" }}>
               <Button size="slim" onClick={handleNavigateToSubscriptionPage}>
-                Increase Spending LIMIT
+                Increase Spending Limit
               </Button>
             </span>
             <ProgressBar color="success" progress={progressCounter} />
