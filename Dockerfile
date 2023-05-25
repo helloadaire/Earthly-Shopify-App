@@ -12,8 +12,6 @@ COPY package*.json ./
 COPY web .
 RUN npm install
 RUN npm install mongodb
-WORKDIR /app/web
-RUN npm install dotenv
-WORKDIR /app
+RUN cd web && npm install dotenv
 RUN cd frontend && npm install && npm run build
 CMD ["npm", "run", "serve"]
