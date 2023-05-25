@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { DeliveryMethod } from "@shopify/shopify-api";
 import { MongoClient } from "mongodb";
 import shopify from "./shopify.js";
@@ -19,8 +20,8 @@ export default {
       // ini
       const payload = JSON.parse(body);
       const order_id = '{"orderId":' + payload["id"] + "}";
-      const uri =
-        "mongodb+srv://earthlyapp:70JKQBvUUWkbLrWd@earthly.fkmgicj.mongodb.net/?retryWrites=true&w=majority";
+      const uri = process.env.MONGODBCS;
+	  //console.log(uri);
       const client = new MongoClient(uri);
       console.log(shop + " Webhook incoming");
       // Records events that happen successfully STEP 3
@@ -44,7 +45,9 @@ export default {
           });
           //console.log(supdate);
           //console.log(record);
-        } finally {
+        }catch (err) {
+		  console.log("MONGOdb ERROR:" + err);
+		}finally {
           client2.close();
         }
       }
@@ -81,23 +84,39 @@ export default {
             const session = await shopify.config.sessionStorage.loadSession(
               sessionId
             );
+			console.log('session:'+JSON.stringify(session));
+			let merchantPlan = getAppSubscription(session);
+			console.log('plan:'+JSON.stringify(merchantPlan));
             resp = await createUsageRecord(session, first.appCharge);
-            console.log(resp);
-            //Creating asset
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", first.earthlyApiKey);
-            myHeaders.append("Content-Type", "application/json");
-            var raw = JSON.stringify({
-              projectId: first.earthlyProjectId,
-              userId: first.earthlyAlmondUserId,
-              amount: first.amount,
-            });
-            var requestOptions = {
-              method: "POST",
-              headers: myHeaders,
-              body: raw,
-              redirect: "follow",
-            };
+			//Creating Earthly asset
+			//Only create asset if Shopify charged successfully first 
+		    if (resp['createdRecord']==true){
+				var myHeaders = new Headers();
+				myHeaders.append("Authorization", first.earthlyApiKey);
+				myHeaders.append("Content-Type", "application/json");
+				var raw = JSON.stringify({
+				  projectId: first.earthlyProjectId,
+				  userId: first.earthlyAlmondUserId,
+				  amount: first.amount,
+				});
+				var requestOptions = {
+				  method: "POST",
+				  headers: myHeaders,
+				  body: raw,
+				  redirect: "follow",
+				};
+				try{
+				  let signal=await fetch("https://backend.staging.almond.io/api/v2/assets",requestOptions);
+				  var signalResponse = await signal.json();
+				  captureRecord(signalResponse, first);
+				}catch(err){
+				  console.log("EARTHLY API error", err);
+				}
+			}
+			else if (resp['createdRecord']==false){
+				console.log('Merchant Reached Cap, Skipped!:'+sessionId);
+			}
+			/*
             fetch(
               "https://backend.staging.almond.io/api/v2/assets",
               requestOptions
@@ -105,13 +124,17 @@ export default {
               .then((response) => response.json())
               .then((result) => captureRecord(result, first))
               .catch((error) => console.log("error", error));
+			*/  
           } else {
             console.log("Duplicate Record, Skipped!");
           }
         } else if (first.status == "Pause") {
           console.log("Account Paused. Event skipped!");
         }
-      } finally {
+      }catch (err) {
+		  console.log("MONGOdb ERROR:" + err);
+	  }
+	  finally {
         await client.close();
       }
     },

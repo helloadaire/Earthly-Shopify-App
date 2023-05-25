@@ -1,11 +1,12 @@
+import 'dotenv/config';
 import { GraphqlQueryError, BillingInterval } from "@shopify/shopify-api";
 import shopify from "./shopify.js";
 
 const USAGE_CHARGE_INCREMENT_AMOUNT = 1.0;
 
-// Please change these 
 export const billingConfig = {
   "My plan": {
+    // This is an example configuration that would do a one-time charge for $5 (only USD is currently supported)
     amount: 1.0,
     currencyCode: "GBP",
     interval: BillingInterval.Usage,
@@ -13,14 +14,13 @@ export const billingConfig = {
   },
 };
 
-// Please change isTest to false in production
 export async function requestBilling(res, next) {
   const plans = Object.keys(billingConfig);
   const session = res.locals.shopify.session;
   const hasPayment = await shopify.api.billing.check({
     session,
     plans: plans,
-    isTest: true,
+    isTest: process.env.TESTPAYMENT,
   });
 
   if (hasPayment) {
@@ -30,7 +30,7 @@ export async function requestBilling(res, next) {
       await shopify.api.billing.request({
         session,
         plan: plans[0],
-        isTest: true,
+        isTest: process.env.TESTPAYMENT,
       })
     );
   }
@@ -128,6 +128,7 @@ export async function createUsageRecord(session, charge) {
     } else {
       throw error;
     }
+	console.log("Billing Error while charging");
   }
 
   if (
@@ -183,6 +184,7 @@ export async function getAppSubscription(session) {
     } else {
       throw error;
     }
+	console.log("Billing Error while getting subscription");
   }
   console.log(subscriptionLineItem);
   return subscriptionLineItem;

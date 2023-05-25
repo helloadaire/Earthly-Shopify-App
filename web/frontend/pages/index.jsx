@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   Card,
   Page,
@@ -28,6 +28,7 @@ import { PaidFeature } from "../components";
 export default function HomePage() {
   // init
   const [connected, setConnected] = useState(false);
+  const [validMerchant, setValidMerchant] = useState(false);
   const accountName = connected ? " O N " : "";
   const AuthenticatedFetch = useAuthenticatedFetch();
   const mystyle = {
@@ -89,14 +90,16 @@ export default function HomePage() {
   // Show Shop panel if shop is registered only
   function showPanel(qresult) {
 	  console.log(qresult);
-    document.getElementsByClassName("connectionPanel")[0].style.visibility =
-      "visible";
-    let selectedPackaged = qresult.amount + ":" + qresult.earthlyProjectId + ":" + qresult.appCharge;
-    document.querySelector('[value="' + selectedPackaged + '"]').checked = true;
+	  setValidMerchant(true);
+      //document.getElementsByClassName("connectionPanel")[0].style.visibility = "visible";
+      let selectedPackaged = qresult.amount + ":" + qresult.earthlyProjectId + ":" + qresult.appCharge;
+      document.querySelector('[value="' + selectedPackaged + '"]').checked = true;
   }
   // Query Shop info 
   // You can use useAppQuery for authenticated get
-  useAppQuery({
+  /*
+  useEffect(() => {
+    useAppQuery({
     url: "/api/getconfig/",
     reactQueryOptions: {
       onSuccess: (qresult) => {
@@ -115,7 +118,28 @@ export default function HomePage() {
       },
     },
   });
- 
+  }, []);
+  */
+  const mainConfig = useAppQuery({
+    url: "/api/getconfig/",
+    reactQueryOptions: {
+      onSuccess: (qresult) => {
+        // If active show connected and projects
+        if (qresult.status == "Active") {
+          setConnected((connected) => true);
+          showPanel(qresult);
+        } // Else if paused then show disconncted but still show projects
+        else if (qresult.status == "Pause") {
+          setConnected((connected) => false);
+          showPanel(qresult);
+        } // Else show nothing
+        else {
+          //Nothing
+        }
+      },
+    },
+  });
+
   // Render
   //https://polaris.shopify.com/components/layout-and-structure/media-card
   //https://polaris.shopify.com/components/actions/account-connection
@@ -146,7 +170,7 @@ export default function HomePage() {
             />
           </MediaCard>
         </Layout.Section>
-        <div className="connectionPanel" style={{ visibility: "hidden" }}>
+        <div className="connectionPanel" style={{ visibility: validMerchant ? "visible" : "hidden" }}>
           <Layout.Section>
             <AccountConnection
               accountName={accountName}

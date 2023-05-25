@@ -55,7 +55,7 @@ export function PaidFeature() {
   const [billingMessage, setBillingMessage] = useState("-");
 
   function BillingCard(input) {
-    if (billingState == "first") {
+    if (billingState === "first") {
       return (
         <div>
           <a target="_blank" href={billingMessage}>

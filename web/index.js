@@ -1,4 +1,5 @@
 // @ts-check
+import 'dotenv/config';
 import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
@@ -42,8 +43,7 @@ app.use(express.json());
 /*** API Endpoints ***************************************/
 // Get mongodb connection;
 import { MongoClient } from "mongodb";
-const uri =
-  "mongodb+srv://earthlyapp:70JKQBvUUWkbLrWd@earthly.fkmgicj.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.MONGODBCS;
 const client = new MongoClient(uri);
 // Get config | returns config based on user shop domain/id
 
@@ -186,7 +186,7 @@ app.get("/api/getconfig", async (_req, res) => {
     //res.status(200).send(first);
     if (first == null) {
       console.log(shopName + " None registered merchant opened APP.");
-      res.status(200).send(first);
+      res.status(200).send('{"code":"None registered merchant opened APP."}'); 
     }
     // If first time then send a call to Earthly so we can create a default user id
     // send refresh after 5 seconds
@@ -214,7 +214,7 @@ app.get("/api/getconfig", async (_req, res) => {
       res.status(200).send(first);
     }
   } catch (err) {
-    console.log("ERROR:" + err);
+    console.log("MONGOdb ERROR:" + err);
   } finally {
     await client.close();
   }
@@ -241,6 +241,11 @@ app.post("/api/saveconfig", async (_req, res) => {
         var newvalues = { $set: { status: "Active" } };
         console.log("Activate it");
       }
+	  else{
+		console.log("BAD body request. Must be either Disconnect or Connect:");
+		res.status(200).send('{"code":"BAD body request. Must be either Disconnect or Connect"}'); 
+		return;
+	  }
       const supdate = await collection.updateOne(
         myquery,
         newvalues,
@@ -250,7 +255,7 @@ app.post("/api/saveconfig", async (_req, res) => {
       //console.log(newvalues);
       res.status(200).send('{"code":"OK"}');
     } catch (err) {
-      console.log("ERROR:" + err);
+      console.log("MONGOdb ERROR:" + err);
     } finally {
       await client.close();
     }
@@ -279,10 +284,14 @@ app.post("/api/saveconfig", async (_req, res) => {
       //console.log(newvalues);
       res.status(200).send('{"code":"OK"}');
     } catch (err) {
-      console.log("ERROR:" + err);
+      console.log("MONGOdb ERROR:" + err);
     } finally {
       await client.close();
     }
+  }
+  else{
+	console.log("BAD code request. Must be either savestatus or savepackage:");
+	res.status(200).send('{"code":"BAD code request. Must be either savestatus or savepackage"}');	
   }
 });
 
