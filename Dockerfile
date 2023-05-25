@@ -6,6 +6,8 @@ ENV SHOPIFY_API_KEY dbeab1c55f0e6f9e2693f4fd2bbaf363
 ENV PORT 8081
 ENV HOST https://aminfri-xg7jrfaima-uc.a.run.app
 ENV SCOPES read_orders
+ENV MONGODBCS mongodb+srv://earthlyapp:70JKQBvUUWkbLrWd@earthly.fkmgicj.mongodb.net/?retryWrites=true&w=majority
+ENV TESTPAYMENT true
 EXPOSE 8081
 WORKDIR /app
 COPY package*.json ./
