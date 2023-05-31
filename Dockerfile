@@ -4,7 +4,7 @@ ARG SHOPIFY_API_KEY dbeab1c55f0e6f9e2693f4fd2bbaf363
 ENV SHOPIFY_API_SECRET c13179ab1c17869deb9b24ed432bde2c
 ENV SHOPIFY_API_KEY dbeab1c55f0e6f9e2693f4fd2bbaf363
 ENV PORT 8081
-ENV HOST https://aminfri-xg7jrfaima-uc.a.run.app
+ENV HOST https://earthly-shopify-app-xg7jrfaima-uc.a.run.app
 ENV SCOPES read_orders
 ENV MONGODBCS mongodb+srv://earthlyapp:70JKQBvUUWkbLrWd@earthly.fkmgicj.mongodb.net/?retryWrites=true&w=majority
 ENV TESTPAYMENT true
